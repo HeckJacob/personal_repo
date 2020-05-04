@@ -6,6 +6,7 @@ WITH Eligibility as (
 Select CPER.policyNumber
 --, CPER.TransactionDate
 , CPER.SubmittedDate
+, CPER.transaction_id
 , EZCP.StartDate
 , EZCP.EndDate
 , CASE WHEN CPER.Product_Type_Whole_or_Term_Life                    >= EZCP.Product_Type_Whole_or_Term_Life                    	THEN 1 ELSE 0 END AS 'Product_Type_Whole_or_Term_Life'
@@ -78,7 +79,7 @@ FROM haven_analytics.CoverPathEligibilityRules CPER -- Per Policy, 1 or 0 on eac
 )
 , Rules AS (
 Select EL.*
-,  Product_Type_Whole_or_Term_Life
+, Product_Type_Whole_or_Term_Life
 + Plan_Name_not_like_Vantage_Term_ART
 + Plan_Name_Not_Whole_Life_Legacy_10_Pay
 + Plan_Name_Not_Whole_Life_Legacy_12_Pay
@@ -144,6 +145,25 @@ Select EL.*
 	AS 'RulesPassed'
 FROM Eligibility EL
 )
+, Eligible AS (
 Select R.*
-, CASE WHEN R.RulesPassed = 62 THEN 1 ELSE 0 END AS 'EligibleFlg'
+, CASE WHEN R.RulesPassed = 62 THEN 1 ELSE 0 END AS 'OriginalEligibleFlg'
 FROM Rules R
+)
+, MixedEligibility AS (
+SELECT EL.transaction_id
+FROM Eligible EL
+GROUP BY EL.transaction_id
+HAVING SUM(EL.OriginalEligibleFlg) > 0
+	AND SUM(EL.OriginalEligibleFlg) < COUNT(*)
+)
+SELECT EL.*
+, CASE WHEN ME.transaction_id IS NOT NULL THEN 0
+	ELSE EL.OriginalEligibleFlg
+	END AS EligibleFlg
+, CASE WHEN ME.transaction_id IS NOT NULL THEN 1
+	ELSE 0
+	END AS JointAppIneligible
+FROM Eligible EL
+	LEFT JOIN MixedEligibility ME ON ME.transaction_id = EL.transaction_id
+
