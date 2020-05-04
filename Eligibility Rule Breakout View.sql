@@ -1,6 +1,6 @@
-DROP View haven_analytics.CoverPathEligibilityRules;
+DROP VIEW haven_analytics.CoverPathEligibilityRules;
 
-Create View haven_analytics.CoverPathEligibilityRules as
+CREATE VIEW haven_analytics.CoverPathEligibilityRules as
 
 WITH add_alt_hold AS (
     SELECT base.policy_number, 
@@ -45,6 +45,7 @@ WITH add_alt_hold AS (
 , eligibile AS (
 SELECT a.policy_number AS policyNumber
 , DATE(NB.SUBMISSION_DATE) AS 'SubmittedDate'
+, a.transaction_id
 --, DATE(a.transaction_date) AS 'TransactionDate'
 , CASE WHEN a.product_type IN ('Whole Life','Term Life') THEN 1 ELSE 0 END AS 'Product_Type_Whole_or_Term_Life'
 , CASE WHEN a.plan_name NOT LIKE '%Vantage Term ART%' AND a.plan_name NOT LIKE '%Renew%' THEN 1 ELSE 0 END AS 'Plan_Name_not_like_Vantage_Term_ART' --
