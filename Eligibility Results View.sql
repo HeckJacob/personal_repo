@@ -14,6 +14,7 @@ Select CPER.policyNumber
 , CASE WHEN CPER.Plan_Name_Not_Whole_Life_Legacy_10_Pay             >= EZCP.Plan_Name_Not_Whole_Life_Legacy_10_Pay             	THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_10_Pay'
 , CASE WHEN CPER.Plan_Name_Not_Whole_Life_Legacy_12_Pay             >= EZCP.Plan_Name_Not_Whole_Life_Legacy_12_Pay             	THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_12_Pay' --
 , CASE WHEN CPER.Plan_Name_Not_Whole_Life_Legacy_15_Pay             >= EZCP.Plan_Name_Not_Whole_Life_Legacy_15_Pay             	THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_15_Pay' --
+, CASE WHEN CPER.Juvenile_WL_15										>= EZCP.Juvenile_WL_15										THEN 1 ELSE 0 END AS 'Juvenile_WL_15'
 , CASE WHEN CPER.Plan_Name_not_like_Whole_Life_Legacy_20            >= EZCP.Plan_Name_not_like_Whole_Life_Legacy_20            	THEN 1 ELSE 0 END AS 'Plan_Name_not_like_Whole_Life_Legacy_20'
 , CASE WHEN CPER.Product_Type_not_Whole_Life_or_Term_Life           >= EZCP.Product_Type_not_Whole_Life_or_Term_Life           	THEN 1 ELSE 0 END AS 'Product_Type_not_Whole_Life_or_Term_Life'
 , CASE WHEN CPER.Plan_Name_not_Like_Whole_Life_Legacy_65            >= EZCP.Plan_Name_not_Like_Whole_Life_Legacy_65            	THEN 1 ELSE 0 END AS 'Plan_Name_not_Like_Whole_Life_Legacy_65'
@@ -84,6 +85,7 @@ Select EL.*
 + Plan_Name_Not_Whole_Life_Legacy_10_Pay
 + Plan_Name_Not_Whole_Life_Legacy_12_Pay
 + Plan_Name_Not_Whole_Life_Legacy_15_Pay
++ Juvenile_WL_15
 + Plan_Name_not_like_Whole_Life_Legacy_20
 + Product_Type_not_Whole_Life_or_Term_Life
 + Plan_Name_not_Like_Whole_Life_Legacy_65
@@ -147,7 +149,8 @@ FROM Eligibility EL
 )
 , Eligible AS (
 Select R.*
-, CASE WHEN R.RulesPassed = 62 THEN 1 ELSE 0 END AS 'OriginalEligibleFlg'
+, CASE WHEN R.RulesPassed = 63 THEN 1 ELSE 0 END AS 'OriginalEligibleFlg'
+, 63 AS MaxRulesNeeded
 FROM Rules R
 )
 , MixedEligibility AS (

@@ -51,7 +51,9 @@ SELECT a.policy_number AS policyNumber
 , CASE WHEN a.plan_name NOT LIKE '%Vantage Term ART%' AND a.plan_name NOT LIKE '%Renew%' THEN 1 ELSE 0 END AS 'Plan_Name_not_like_Vantage_Term_ART' --
 , CASE WHEN a.plan_name NOT IN ('WholeLife Legacy 10 Pay (A1000)','Whole Life Legacy 10 Pay') THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_10_Pay'
 , CASE WHEN a.plan_name  <> 'Whole Life Legacy 12 Pay' THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_12_Pay' --
-, CASE WHEN a.plan_name  <> 'Whole Life Legacy 15 Pay' THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_15_Pay' --
+--, CASE WHEN a.plan_name  <> 'Whole Life Legacy 15 Pay' THEN 1 ELSE 0 END AS 'Plan_Name_Not_Whole_Life_Legacy_15_Pay' --
+, CASE WHEN a.age_primary_insured >= 18 AND a.plan_name = 'Whole Life Legacy 15 Pay' THEN 0 ELSE 1 END AS 'Plan_Name_Not_Whole_Life_Legacy_15_Pay' --
+, CASE WHEN a.age_primary_insured < 18 AND a.plan_name = 'Whole Life Legacy 15 Pay' THEN 0 ELSE 1 END as 'Juvenile_WL_15' --
 , CASE WHEN a.plan_name NOT LIKE '%Whole Life Legacy 20%' THEN 1 ELSE 0 END AS 'Plan_Name_not_like_Whole_Life_Legacy_20'
 , CASE WHEN a.product_type IN ('Whole Life','Term Life') THEN 1 ELSE 0 END AS 'Product_Type_not_Whole_Life_or_Term_Life'
 , CASE WHEN a.plan_name NOT LIKE '%Whole Life Legacy 65%' THEN 1 ELSE 0 END AS 'Plan_Name_not_Like_Whole_Life_Legacy_65'
